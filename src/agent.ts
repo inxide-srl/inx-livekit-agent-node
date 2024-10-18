@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
+import { context } from './config';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const envPath = path.join(__dirname, '../.env.local');
@@ -23,7 +24,7 @@ export default defineAgent({
 
     const model = new openai.realtime.RealtimeModel({
       turnDetection: { type: 'server_vad' },
-      instructions: 'You are a helpful assistant.',
+      instructions: context,
     });
 
     const agent = new multimodal.MultimodalAgent({
