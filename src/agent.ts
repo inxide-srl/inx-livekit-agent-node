@@ -107,9 +107,9 @@ export default defineAgent({
               <p> Intent: ${intent}</p>
               <p>Data: ${data}</p>`,
               })
-              .then((msg: MessagesSendResult) => {
-                console.log(msg);
-                return msg;
+              .then((result: MessagesSendResult) => {
+                console.log(result);
+                return result.message;
               });
           },
         },
