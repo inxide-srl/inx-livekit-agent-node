@@ -91,6 +91,7 @@ export default defineAgent({
             const options: MailgunClientOptions = {
               username: 'api',
               key: process.env.MAILGUN_API_KEY || '',
+              url: 'https://api.eu.mailgun.net',
             };
 
             const mg: Interfaces.IMailgunClient = mailgun.client(options);
