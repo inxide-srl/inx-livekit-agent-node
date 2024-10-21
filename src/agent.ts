@@ -5,7 +5,11 @@ import { type JobContext, WorkerOptions, cli, defineAgent, multimodal } from '@l
 import * as openai from '@livekit/agents-plugin-openai';
 import dotenv from 'dotenv';
 import formData from 'form-data';
-import Mailgun, { type Interfaces, type MessagesSendResult } from 'mailgun.js';
+import Mailgun, {
+  type Interfaces,
+  type MailgunClientOptions,
+  type MessagesSendResult,
+} from 'mailgun.js';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
@@ -84,10 +88,13 @@ export default defineAgent({
 
             const mailgun = new Mailgun(formData);
 
-            const mg: Interfaces.IMailgunClient = mailgun.client({
+            const options: MailgunClientOptions = {
               username: 'api',
-              key: process.env.MAILGUN_API_KEY,
-            });
+              key: process.env.MAILGUN_API_KEY || '',
+            };
+
+            const mg: Interfaces.IMailgunClient = mailgun.client(options);
+
             return mg.messages
               .create('sandboxfd5de195b2fb47bbab38bf311db9eec8.mailgun.org', {
                 from: 'Assistente Alegas <mailgun@sandboxfd5de195b2fb47bbab38bf311db9eec8.mailgun.org>',
