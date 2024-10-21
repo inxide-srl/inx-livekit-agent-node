@@ -4,10 +4,11 @@
 import { type JobContext, WorkerOptions, cli, defineAgent, multimodal } from '@livekit/agents';
 import * as openai from '@livekit/agents-plugin-openai';
 import dotenv from 'dotenv';
+import formData from 'form-data';
+import Mailgun from 'mailgun';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-
-// import { z } from 'zod';
+import { z } from 'zod';
 
 const context = `System settings:
 
@@ -21,6 +22,7 @@ Instructions:
 - Request to customer the missing required data to perform the relative intent action, based on "Required Keys by Intent" list.
 - Depending on the requested service, invoke the dedicated function and ask relevant questions to gather the necessary information.
 - Always greet the customer and respond in Italian, unless the customer asks you to use another language.
+- Always send a resume to customer's e-mail with the collected data at the call termination
 
 Personality:
 - Be polite, patient, and helpful.
@@ -70,6 +72,36 @@ export default defineAgent({
       //     },
       //   },
       // },
+      fncCtx: {
+        sendSummary: {
+          description: 'On end call, send an summary e-mail',
+          parameters: z.object({
+            intent: z.string().describe('The customer call intent'),
+            data: z.string().describe('Required keys/values to handle the intent'),
+          }),
+          execute: async ({ intent, data }) => {
+            console.debug(`Executing send summary e-mail for intent ${intent}`, { intent, data });
+            const mailgun = new Mailgun(formData);
+            const mg = mailgun.client({ username: 'api', key: process.env.MAILGUN_API_KEY });
+            return mg.messages
+              .create('sandboxfd5de195b2fb47bbab38bf311db9eec8.mailgun.org', {
+                from: 'Assistente Alegas <mailgun@sandboxfd5de195b2fb47bbab38bf311db9eec8.mailgun.org>',
+                to: ['j.deluca@increso.it'],
+                subject: 'Recap della tua richiesta',
+                text: `Questo è il recap della tua richiesta
+              Intent: ${intent}
+              Data: ${data}`,
+                html: `<h1>Questo è il recap della tua richiesta!</h1>
+              <p> Intent: ${intent}</p>
+              <p>Data: ${data}</p>`,
+              })
+              .then((msg: any) => {
+                console.log(msg);
+                return msg;
+              });
+          },
+        },
+      },
     });
 
     const session = await agent

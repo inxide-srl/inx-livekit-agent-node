@@ -24,6 +24,8 @@
     "@livekit/agents": "^0.3.2",
     "@livekit/agents-plugin-openai": "^0.3.2",
     "dotenv": "^16.4.5",
+    "form-data": "^4.0.1",
+    "mailgun": "^0.5.0",
     "zod": "^3.23.8"
   }
 }
