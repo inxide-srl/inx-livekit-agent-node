@@ -6,7 +6,8 @@ import * as openai from '@livekit/agents-plugin-openai';
 import dotenv from 'dotenv';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { z } from 'zod';
+
+// import { z } from 'zod';
 
 const context = `System settings:
 
@@ -54,20 +55,20 @@ export default defineAgent({
 
     const agent = new multimodal.MultimodalAgent({
       model,
-      fncCtx: {
-        weather: {
-          description: 'Get the weather in a location',
-          parameters: z.object({
-            location: z.string().describe('The location to get the weather for'),
-          }),
-          execute: async ({ location }) => {
-            console.debug(`executing weather function for ${location}`);
-            return await fetch(`https://wttr.in/${location}?format=%C+%t`)
-              .then((data) => data.text())
-              .then((data) => `The weather in ${location} right now is ${data}.`);
-          },
-        },
-      },
+      // fncCtx: {
+      //   weather: {
+      //     description: 'Get the weather in a location',
+      //     parameters: z.object({
+      //       location: z.string().describe('The location to get the weather for'),
+      //     }),
+      //     execute: async ({ location }) => {
+      //       console.debug(`executing weather function for ${location}`);
+      //       return await fetch(`https://wttr.in/${location}?format=%C+%t`)
+      //         .then((data) => data.text())
+      //         .then((data) => `The weather in ${location} right now is ${data}.`);
+      //     },
+      //   },
+      // },
     });
 
     const session = await agent
