@@ -91,7 +91,6 @@ export default defineAgent({
             const options: MailgunClientOptions = {
               username: 'api',
               key: process.env.MAILGUN_API_KEY || '',
-              url: 'https://api.eu.mailgun.net',
             };
 
             const mg: Interfaces.IMailgunClient = mailgun.client(options);
@@ -99,7 +98,7 @@ export default defineAgent({
             return mg.messages
               .create('sandboxfd5de195b2fb47bbab38bf311db9eec8.mailgun.org', {
                 from: 'Assistente Alegas <mailgun@sandboxfd5de195b2fb47bbab38bf311db9eec8.mailgun.org>',
-                to: ['j.deluca@increso.it'],
+                to: ['andrea.mason85@gmail.com'],
                 subject: 'Recap della tua richiesta',
                 text: `Questo è il recap della tua richiesta
               Intent: ${intent}
