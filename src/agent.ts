@@ -49,8 +49,11 @@ export default defineAgent({
     console.log(`starting assistant example agent for ${participant.identity}`);
 
     const model = new openai.realtime.RealtimeModel({
-      turnDetection: { type: 'server_vad' },
+      turnDetection: { type: 'server_vad', prefix_padding_ms: 750 },
       instructions: context,
+      voice: 'shimmer',
+      inputAudioFormat: 'g711_ulaw',
+      outputAudioFormat: 'g711_ulaw',
     });
 
     const agent = new multimodal.MultimodalAgent({
