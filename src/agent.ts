@@ -76,8 +76,13 @@ export default defineAgent({
 
     session.conversation.item.create({
       type: 'message',
-      role: 'user',
-      content: [{ type: 'input_text', text: 'Welcome the customer' }],
+      role: 'assistant',
+      content: [
+        {
+          type: 'text',
+          text: 'Kindly greet the customer and welcome them to the customer service.',
+        },
+      ],
     });
     session.response.create();
   },
