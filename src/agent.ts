@@ -5,7 +5,7 @@ import { type JobContext, WorkerOptions, cli, defineAgent, multimodal } from '@l
 import * as openai from '@livekit/agents-plugin-openai';
 import dotenv from 'dotenv';
 import formData from 'form-data';
-import Mailgun from 'mailgun';
+import Mailgun, { type Interfaces, type MessagesSendResult } from 'mailgun.js';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
@@ -81,8 +81,13 @@ export default defineAgent({
           }),
           execute: async ({ intent, data }) => {
             console.debug(`Executing send summary e-mail for intent ${intent}`, { intent, data });
+
             const mailgun = new Mailgun(formData);
-            const mg = mailgun.client({ username: 'api', key: process.env.MAILGUN_API_KEY });
+
+            const mg: Interfaces.IMailgunClient = mailgun.client({
+              username: 'api',
+              key: process.env.MAILGUN_API_KEY,
+            });
             return mg.messages
               .create('sandboxfd5de195b2fb47bbab38bf311db9eec8.mailgun.org', {
                 from: 'Assistente Alegas <mailgun@sandboxfd5de195b2fb47bbab38bf311db9eec8.mailgun.org>',
@@ -95,7 +100,7 @@ export default defineAgent({
               <p> Intent: ${intent}</p>
               <p>Data: ${data}</p>`,
               })
-              .then((msg: any) => {
+              .then((msg: MessagesSendResult) => {
                 console.log(msg);
                 return msg;
               });
