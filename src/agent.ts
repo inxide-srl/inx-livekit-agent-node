@@ -52,8 +52,6 @@ export default defineAgent({
       turnDetection: { type: 'server_vad', prefix_padding_ms: 750 },
       instructions: context,
       voice: 'shimmer',
-      inputAudioFormat: 'g711_ulaw',
-      outputAudioFormat: 'g711_ulaw',
     });
 
     const agent = new multimodal.MultimodalAgent({
