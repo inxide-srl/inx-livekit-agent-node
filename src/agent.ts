@@ -74,16 +74,16 @@ export default defineAgent({
       .start(ctx.room, participant)
       .then((session) => session as openai.realtime.RealtimeSession);
 
-    session.conversation.item.create({
-      type: 'message',
-      role: 'assistant',
-      content: [
-        {
-          type: 'text',
-          text: 'Kindly greet the customer and welcome them to the customer service.',
-        },
-      ],
-    });
+    // session.conversation.item.create({
+    //   type: 'message',
+    //   role: 'assistant',
+    //   content: [
+    //     {
+    //       type: 'text',
+    //       text: 'Kindly greet the customer and welcome them to the customer service.',
+    //     },
+    //   ],
+    // });
     session.response.create();
   },
 });
