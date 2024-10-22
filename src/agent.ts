@@ -58,14 +58,14 @@ export default defineAgent({
       // modalities: ['text', 'audio'],
       turnDetection: {
         type: 'server_vad',
-        threshold: 0.7,
-        prefix_padding_ms: 1000,
-        silence_duration_ms: 500,
+        // threshold: 0.5,
+        prefix_padding_ms: 500,
+        // silence_duration_ms: 500,
       },
-      temperature: 0.8,
+      // temperature: 0.8,
       // maxResponseOutputTokens: 250,
       instructions: context,
-      voice: 'alloy',
+      voice: 'shimmer',
     });
 
     const agent = new multimodal.MultimodalAgent({
@@ -121,55 +121,55 @@ export default defineAgent({
               });
           },
         },
-        hangup: {
-          description: 'On end call, disconnect the room',
-          parameters: z.object({
-            isHangup: z.boolean().describe('check if the user has already said goodbye'),
-          }),
-          execute: async (data) => {
-            console.debug(`Executing hangup call`);
-            // ctx.room.remoteParticipants.
-            console.log('data.isHangup', data.isHangup);
-            console.log(
-              'ctx.room?.localParticipant?.identity',
-              ctx.room?.localParticipant?.identity,
-            );
+        // hangup: {
+        //   description: 'On end call, disconnect the room',
+        //   parameters: z.object({
+        //     isHangup: z.boolean().describe('check if the user has already said goodbye'),
+        //   }),
+        //   execute: async (data) => {
+        //     console.debug(`Executing hangup call`);
+        //     // ctx.room.remoteParticipants.
+        //     console.log('data.isHangup', data.isHangup);
+        //     console.log(
+        //       'ctx.room?.localParticipant?.identity',
+        //       ctx.room?.localParticipant?.identity,
+        //     );
 
-            for await (const [index, _participant] of ctx.room?.remoteParticipants?.entries() ||
-              []) {
-              console.log('Participant', index, _participant);
+        //     for await (const [index, _participant] of ctx.room?.remoteParticipants?.entries() ||
+        //       []) {
+        //       console.log('Participant', index, _participant);
 
-              if (_participant.identity !== ctx.room?.localParticipant?.identity) {
-                // await _participant..disconnect()
-                //   .then(() => {
-                //     console.log(`Disconnected ${part.identity}`);
-                //   })
-                // .catch(error => {
-                //   console.error(`Erro ao desconectar ${participant.identity}:`, error);
-                // });
-              }
-            }
-            if (data.isHangup) {
-              if (ctx.room) {
-                return ctx.room.disconnect();
-              }
-            }
+        //       if (_participant.identity !== ctx.room?.localParticipant?.identity) {
+        //         // await _participant..disconnect()
+        //         //   .then(() => {
+        //         //     console.log(`Disconnected ${part.identity}`);
+        //         //   })
+        //         // .catch(error => {
+        //         //   console.error(`Erro ao desconectar ${participant.identity}:`, error);
+        //         // });
+        //       }
+        //     }
+        //     if (data.isHangup) {
+        //       if (ctx.room) {
+        //         return ctx.room.disconnect();
+        //       }
+        //     }
 
-            return false;
+        //     return false;
 
-            // room.disconnect()
-            //  .then(() => {
-            // console.log('Sala encerrada com sucesso.');
-            // // Exibir uma mensagem de confirmação para o usuário
-            // showNotification('A chamada foi encerrada para todos os participantes.');
-            // })
-            // .catch(error => {
-            // console.error('Erro ao encerrar a sala:', error);
-            // // Exibir uma mensagem de erro para o usuário
-            // showNotification('Ocorreu um erro ao encerrar a chamada.');
-            // });
-          },
-        },
+        //     // room.disconnect()
+        //     //  .then(() => {
+        //     // console.log('Sala encerrada com sucesso.');
+        //     // // Exibir uma mensagem de confirmação para o usuário
+        //     // showNotification('A chamada foi encerrada para todos os participantes.');
+        //     // })
+        //     // .catch(error => {
+        //     // console.error('Erro ao encerrar a sala:', error);
+        //     // // Exibir uma mensagem de erro para o usuário
+        //     // showNotification('Ocorreu um erro ao encerrar a chamada.');
+        //     // });
+        //   },
+        // },
       },
     });
 
@@ -179,11 +179,11 @@ export default defineAgent({
 
     session.conversation.item.create({
       type: 'message',
-      role: 'system',
+      role: 'user',
       content: [
         {
           type: 'input_text',
-          text: 'Greet customer warmly and maintain a friendly, professional tone.',
+          text: 'Chi parla?',
         },
       ],
     });
