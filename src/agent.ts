@@ -59,13 +59,13 @@ export default defineAgent({
       turnDetection: {
         type: 'server_vad',
         // threshold: 0.5,
-        // prefix_padding_ms: 500,
+        prefix_padding_ms: 500,
         // silence_duration_ms: 500,
       },
       // temperature: 0.8,
       // maxResponseOutputTokens: 250,
       instructions: context,
-      voice: 'alloy',
+      // voice: 'alloy',
     });
 
     const agent = new multimodal.MultimodalAgent({
@@ -177,16 +177,16 @@ export default defineAgent({
       .start(ctx.room, participant)
       .then((session) => session as openai.realtime.RealtimeSession);
 
-    // session.conversation.item.create({
-    //   type: 'message',
-    //   role: 'user',
-    //   content: [
-    //     {
-    //       type: 'input_text',
-    //       text: 'Chi parla?',
-    //     },
-    //   ],
-    // });
+    session.conversation.item.create({
+      type: 'message',
+      role: 'assistant',
+      content: [
+        {
+          type: 'text',
+          text: 'Chi parla?',
+        },
+      ],
+    });
 
     session.response.create();
   },
@@ -195,7 +195,7 @@ export default defineAgent({
 cli.runApp(
   new WorkerOptions({
     agent: fileURLToPath(import.meta.url),
-    logLevel: 'trace',
+    logLevel: 'info',
     wsURL: process.env.LIVEKIT_URL,
     apiKey: process.env.LIVEKIT_API_KEY,
     apiSecret: process.env.LIVEKIT_API_SECRET,
