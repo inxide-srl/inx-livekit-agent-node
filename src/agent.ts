@@ -115,12 +115,16 @@ export default defineAgent({
         },
         hangup: {
           description: 'On end call, disconnect the room',
-          parameters: null,
-          execute: async () => {
+          parameters: z.object({
+            isHangup: z.boolean().describe('check if the user has already said goodbye'),
+          }),
+          execute: async ({ isHangup }) => {
             console.debug(`Executing hangup call}`);
 
-            if (ctx.room) {
-              await ctx.room?.disconnect();
+            if (isHangup) {
+              if (ctx.room) {
+                await ctx.room.disconnect();
+              }
             }
           },
         },
