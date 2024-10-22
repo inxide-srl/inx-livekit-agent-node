@@ -55,35 +55,13 @@ export default defineAgent({
     console.log(`starting assistant example agent for ${participant.identity}`);
 
     const model = new openai.realtime.RealtimeModel({
-      // modalities: ['text', 'audio'],
-      turnDetection: {
-        type: 'server_vad',
-        // threshold: 0.5,
-        prefix_padding_ms: 500,
-        // silence_duration_ms: 500,
-      },
-      // temperature: 0.8,
-      // maxResponseOutputTokens: 250,
+      turnDetection: { type: 'server_vad', prefix_padding_ms: 750 },
       instructions: context,
-      // voice: 'alloy',
+      voice: 'shimmer',
     });
 
     const agent = new multimodal.MultimodalAgent({
       model,
-      // fncCtx: {
-      //   weather: {
-      //     description: 'Get the weather in a location',
-      //     parameters: z.object({
-      //       location: z.string().describe('The location to get the weather for'),
-      //     }),
-      //     execute: async ({ location }) => {
-      //       console.debug(`executing weather function for ${location}`);
-      //       return await fetch(`https://wttr.in/${location}?format=%C+%t`)
-      //         .then((data) => data.text())
-      //         .then((data) => `The weather in ${location} right now is ${data}.`);
-      //     },
-      //   },
-      // },
       fncCtx: {
         sendSummary: {
           description: 'On end call, send an summary e-mail',
@@ -177,16 +155,16 @@ export default defineAgent({
       .start(ctx.room, participant)
       .then((session) => session as openai.realtime.RealtimeSession);
 
-    session.conversation.item.create({
-      type: 'message',
-      role: 'assistant',
-      content: [
-        {
-          type: 'text',
-          text: 'Chi parla?',
-        },
-      ],
-    });
+    // session.conversation.item.create({
+    //   type: 'message',
+    //   role: 'assistant',
+    //   content: [
+    //     {
+    //       type: 'text',
+    //       text: 'Chi parla?',
+    //     },
+    //   ],
+    // });
 
     session.response.create();
   },
@@ -195,7 +173,7 @@ export default defineAgent({
 cli.runApp(
   new WorkerOptions({
     agent: fileURLToPath(import.meta.url),
-    logLevel: 'info',
+    logLevel: 'debug',
     wsURL: process.env.LIVEKIT_URL,
     apiKey: process.env.LIVEKIT_API_KEY,
     apiSecret: process.env.LIVEKIT_API_SECRET,
