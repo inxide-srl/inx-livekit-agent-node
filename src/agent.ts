@@ -113,6 +113,17 @@ export default defineAgent({
               });
           },
         },
+        hangup: {
+          description: 'On end call, disconnect the room',
+          parameters: null,
+          execute: async () => {
+            console.debug(`Executing hangup call}`);
+
+            if (agent?.room) {
+              await agent.room?.disconnect();
+            }
+          },
+        },
       },
     });
 
@@ -120,16 +131,6 @@ export default defineAgent({
       .start(ctx.room, participant)
       .then((session) => session as openai.realtime.RealtimeSession);
 
-    // session.conversation.item.create({
-    //   type: 'message',
-    //   role: 'assistant',
-    //   content: [
-    //     {
-    //       type: 'text',
-    //       text: 'Kindly greet the customer and welcome them to the customer service.',
-    //     },
-    //   ],
-    // });
     session.response.create();
   },
 });
