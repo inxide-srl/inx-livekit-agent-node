@@ -25,12 +25,12 @@ Instructions:
 - Invoke a intent function when needed. If the request falls outside of allowed values, kindly decline the response.
 - Request to customer the missing required data to perform the relative intent action, based on "Required Keys by Intent" list.
 - Depending on the requested service, invoke the dedicated function and ask relevant questions to gather the necessary information.
-- Always greet the customer and respond in Italian, unless the customer asks you to use another language.
+- Always respond in Italian, unless the customer asks you to use another language.
 - Always send a resume to customer's e-mail with the collected data at the call termination
 
 Personality:
 - Be polite, patient, and helpful.
-- Greet customers warmly and maintain a friendly, professional tone.
+- Maintain a friendly, professional tone.
 - Use clear, concise language to assist the user.
 - Ensure that the customer feels understood and supported throughout the conversation.
 
@@ -55,9 +55,17 @@ export default defineAgent({
     console.log(`starting assistant example agent for ${participant.identity}`);
 
     const model = new openai.realtime.RealtimeModel({
-      turnDetection: { type: 'server_vad', prefix_padding_ms: 750 },
+      modalities: ['text', 'audio'],
+      turnDetection: {
+        type: 'server_vad',
+        threshold: 0.7,
+        prefix_padding_ms: 1000,
+        silence_duration_ms: 500,
+      },
+      temperature: 0.8,
+      maxResponseOutputTokens: 250,
       instructions: context,
-      voice: 'shimmer',
+      voice: 'alloy',
     });
 
     const agent = new multimodal.MultimodalAgent({
@@ -118,14 +126,48 @@ export default defineAgent({
           parameters: z.object({
             isHangup: z.boolean().describe('check if the user has already said goodbye'),
           }),
-          execute: async ({ isHangup }) => {
-            console.debug(`Executing hangup call}`);
+          execute: async (data) => {
+            console.debug(`Executing hangup call`);
+            // ctx.room.remoteParticipants.
+            console.log('data.isHangup', data.isHangup);
+            console.log(
+              'ctx.room?.localParticipant?.identity',
+              ctx.room?.localParticipant?.identity,
+            );
 
-            if (isHangup) {
-              if (ctx.room) {
-                await ctx.room.disconnect();
+            for await (const [index, _participant] of ctx.room?.remoteParticipants?.entries() ||
+              []) {
+              console.log('Participant', index, _participant);
+
+              if (_participant.identity !== ctx.room?.localParticipant?.identity) {
+                // await _participant..disconnect()
+                //   .then(() => {
+                //     console.log(`Disconnected ${part.identity}`);
+                //   })
+                // .catch(error => {
+                //   console.error(`Erro ao desconectar ${participant.identity}:`, error);
+                // });
               }
             }
+            if (data.isHangup) {
+              if (ctx.room) {
+                return ctx.room.disconnect();
+              }
+            }
+
+            return false;
+
+            // room.disconnect()
+            //  .then(() => {
+            // console.log('Sala encerrada com sucesso.');
+            // // Exibir uma mensagem de confirmação para o usuário
+            // showNotification('A chamada foi encerrada para todos os participantes.');
+            // })
+            // .catch(error => {
+            // console.error('Erro ao encerrar a sala:', error);
+            // // Exibir uma mensagem de erro para o usuário
+            // showNotification('Ocorreu um erro ao encerrar a chamada.');
+            // });
           },
         },
       },
@@ -135,6 +177,17 @@ export default defineAgent({
       .start(ctx.room, participant)
       .then((session) => session as openai.realtime.RealtimeSession);
 
+    session.conversation.item.create({
+      type: 'message',
+      role: 'system',
+      content: [
+        {
+          type: 'input_text',
+          text: 'Greet customer warmly and maintain a friendly, professional tone.',
+        },
+      ],
+    });
+
     session.response.create();
   },
 });
@@ -142,7 +195,7 @@ export default defineAgent({
 cli.runApp(
   new WorkerOptions({
     agent: fileURLToPath(import.meta.url),
-    logLevel: 'debug',
+    logLevel: 'trace',
     wsURL: process.env.LIVEKIT_URL,
     apiKey: process.env.LIVEKIT_API_KEY,
     apiSecret: process.env.LIVEKIT_API_SECRET,
