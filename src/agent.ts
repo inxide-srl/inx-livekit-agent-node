@@ -55,7 +55,7 @@ export default defineAgent({
     console.log(`starting assistant example agent for ${participant.identity}`);
 
     const model = new openai.realtime.RealtimeModel({
-      modalities: ['text', 'audio'],
+      // modalities: ['text', 'audio'],
       turnDetection: {
         type: 'server_vad',
         threshold: 0.7,
@@ -63,7 +63,7 @@ export default defineAgent({
         silence_duration_ms: 500,
       },
       temperature: 0.8,
-      maxResponseOutputTokens: 250,
+      // maxResponseOutputTokens: 250,
       instructions: context,
       voice: 'alloy',
     });
