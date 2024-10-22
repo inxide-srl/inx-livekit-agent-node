@@ -119,8 +119,8 @@ export default defineAgent({
           execute: async () => {
             console.debug(`Executing hangup call}`);
 
-            if (agent?.room) {
-              await agent.room?.disconnect();
+            if (ctx.room) {
+              await ctx.room?.disconnect();
             }
           },
         },
