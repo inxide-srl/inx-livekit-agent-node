@@ -6,7 +6,10 @@ import { fileURLToPath } from 'node:url';
 
 export default defineAgent({
   entry: async (ctx: JobContext) => {
-    await ctx.connect();
+    await ctx.connect(null, 0, {
+      iceTransportType: 2,
+      continualGatheringPolicy: 1,
+    });
 
     const agent = new multimodal.MultimodalAgent({
       model: new openai.realtime.RealtimeModel({
@@ -42,9 +45,9 @@ Required Keys by Intent:
         modalities: ['text', 'audio'],
         turnDetection: {
           type: 'server_vad',
-          threshold: 0.5,
-          silence_duration_ms: 510,
-          prefix_padding_ms: 800,
+          threshold: 0.35,
+          silence_duration_ms: 750,
+          prefix_padding_ms: 1000,
         },
       }),
     });
