@@ -23,6 +23,7 @@
   "dependencies": {
     "@livekit/agents": "^0.3.2",
     "@livekit/agents-plugin-openai": "^0.3.2",
+    "@livekit/protocol": "^1.27",
     "dotenv": "^16.4.5",
     "form-data": "^4.0.1",
     "mailgun.js": "^10.2.3",
